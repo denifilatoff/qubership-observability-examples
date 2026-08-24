@@ -24,11 +24,13 @@ For backends to save data used:
 
 ```mermaid
 graph TB
+    subgraph "Browser"
+        direction TB
+        APIHUB_FE[APIHUB Frontend]
+    end
+
     subgraph "Kubernetes"
-        subgraph "Browser"
-            direction TB
-            APIHUB_FE[APIHUB Frontend]
-        end
+    direction TB
         subgraph "APIHUB UI"
             direction TB
             APIHUB_NGINX[Nginx]
@@ -40,7 +42,6 @@ graph TB
             VL[VictoriaLogs]
             TEMPO[Tempo]
         end
-
         subgraph "Visualization"
             direction TB
             GRAFANA[Grafana<br/>Dashboards & Visualization]
@@ -117,6 +118,82 @@ Small changes in configurations.
 
     ```bash
     cd researches/frontend-rum/apihub-faro-docker-compose
+    ```
+
+3. Run script to generate all ENVs and JWT keys:
+
+    ```bash
+    ./generate.sh
+    ```
+
+4. Print credentials for Qubership APIHUB UI using the command:
+
+    ```bash
+    cat qubership-apihub-backend-config.yaml
+    ```
+
+    in the section `zeroDayConfiguration` you can find email and password to login:
+
+    ```yaml
+    zeroDayConfiguration:
+      adminEmail: <email>
+      adminPassword: <password>
+    ```
+
+5. Run docker compose
+
+    ```bash
+    docker compose up
+    ```
+
+    > Note: All env and api keys already filled
+
+6. Login in APIHUB and Grafana to see events
+
+Available UIs:
+
+- APIHUB UI - [http://localhost:8081](http://localhost:8081)
+- Grafana - [http://localhost:3000](http://localhost:3000)
+- VictoriaLogs - [http://localhost:9428](http://localhost:9428)
+- Tempo - [http://localhost:3000](http://localhost:3000) (inside the Grafana, Explore -> Tempo)
+
+Credentials:
+
+- APIHUB - see above how to find
+- Grafana - admin / admin
+
+## OpenTelemetry Browser + Qubership APIHUB
+
+### Run PoC
+
+Based of official docker compose from [https://github.com/Netcracker/qubership-apihub/tree/main/docker-compose/apihub-generic](https://github.com/Netcracker/qubership-apihub/tree/main/docker-compose/apihub-generic).
+
+But it extended:
+
+- Added OpenTelemetry Collector
+- Added VictoriaLogs
+- Added Grafana Tempo
+- Added Grafana
+
+Small changes in configurations.
+
+#### Requirements
+
+- docker or podman
+- docker compose or podman compose
+
+#### How to run PoC
+
+1. Clone this repository
+
+    ```bash
+    git clone git@github.com:Netcracker/qubership-observability-examples.git
+    ```
+
+2. Navigate to `researches/frontend-rum/apihub-otel-browser-docker-compose`
+
+    ```bash
+    cd researches/frontend-rum/apihub-otel-browser-docker-compose
     ```
 
 3. Run script to generate all ENVs and JWT keys:

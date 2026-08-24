@@ -14,3 +14,5 @@ venv/
 
 researches/frontend-rum/apihub-faro-docker-compose/data/
 !researches/frontend-rum/apihub-faro-docker-compose/data/.gitkeep
+researches/frontend-rum/apihub-otel-browser-docker-compose/data/
+!researches/frontend-rum/apihub-otel-browser-docker-compose/data/.gitkeep
