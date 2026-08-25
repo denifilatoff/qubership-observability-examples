@@ -1,0 +1,67 @@
+---
+# Reports release readiness across the observability components and keeps one
+# tracking issue per application up to date. See tools/release-radar/README.md.
+
+name: Release Radar
+
+on:
+  schedule:
+    # Every weekday at 06:00 UTC, before the working day starts.
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      application:
+        description: "Application id to report; empty means all of them"
+        required: false
+        default: ''
+      dry-run:
+        type: boolean
+        description: "Render the issues without publishing them"
+        required: false
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: release-radar-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  radar:
+    name: Report release readiness
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Needed to create and update the tracking issues in this repository.
+      issues: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --require-hashes --no-deps -r tools/release-radar/requirements.txt
+
+      - name: Run the radar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHONPATH: tools/release-radar
+          RADAR_APPLICATION: ${{ inputs.application }}
+          RADAR_DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          args=(--config .github/radar-config.yaml)
+          if [ -n "${RADAR_APPLICATION}" ]; then
+            args+=(--application "${RADAR_APPLICATION}")
+          fi
+          if [ "${RADAR_DRY_RUN}" = "true" ]; then
+            args+=(--dry-run)
+          else
+            args+=(--publish)
+          fi
+          python -m radar "${args[@]}"

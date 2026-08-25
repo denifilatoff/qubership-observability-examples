@@ -1,0 +1,80 @@
+---
+# Release radar: which components belong to which application, and how each one
+# ships. See tools/release-radar/README.md for the full reference.
+
+# Repository that hosts the tracking issues.
+hub-repo: Netcracker/qubership-observability-examples
+
+defaults:
+  # Components that ship by dispatching a workflow use this file unless they
+  # override it. Components that ship by publishing a GitHub release set
+  # `release-method: release` instead.
+  release-workflow: docker-release.yaml
+  release-method: workflow
+  # A component whose last release is older than this is reported as stale.
+  stale-after-days: 45
+  # Labels that never justify a release on their own.
+  ignore-labels:
+    - chore
+    - dependencies
+  # Ready-to-merge requests listed per component before the rest collapse.
+  max-ready-listed: 3
+
+applications:
+  - id: monitoring
+    title: Monitoring
+    issue-label: radar/monitoring
+    components:
+      - repo: Netcracker/qubership-monitoring-operator
+        release-workflow: docker-release.yaml
+      - repo: Netcracker/qubership-prometheus-adapter-operator
+        release-workflow: release.yaml
+      - repo: Netcracker/qubership-grafana-reporter
+        release-method: release
+      - repo: Netcracker/qubership-version-exporter
+        release-method: release
+      - repo: Netcracker/qubership-network-latency-exporter
+        release-method: release
+      - repo: Netcracker/qubership-graphite-remote-adapter
+        release-method: release
+      - repo: Netcracker/qubership-grafana-plugins-init
+        release-method: release
+      - repo: Netcracker/qubership-grafana-operator-converter
+        release-method: release
+
+  - id: logging
+    title: Logging
+    issue-label: radar/logging
+    components:
+      - repo: Netcracker/qubership-logging-operator
+        release-workflow: docker-release.yml
+      - repo: Netcracker/qubership-fluentd
+        release-method: release
+      - repo: Netcracker/qubership-tcp-duplicator
+        release-method: release
+      - repo: Netcracker/qubership-external-logging-installer
+        release-method: release
+      - repo: Netcracker/qubership-logql-to-logsql-proxy
+        release-method: release
+      - repo: Netcracker/qubership-graylog-obfuscation-plugin
+        release-method: release
+      - repo: Netcracker/qubership-graylog-archiving-plugin
+        release-method: release
+      - repo: Netcracker/qubership-graylog-auth-proxy
+        release-method: release
+      - repo: Netcracker/qubership-graylog-plugins-init
+        release-method: release
+
+  - id: tracing
+    title: Tracing
+    issue-label: radar/tracing
+    components:
+      - repo: Netcracker/qubership-jaeger
+        release-workflow: jaeger-release.yaml
+
+  - id: opentelemetry
+    title: OpenTelemetry
+    issue-label: radar/opentelemetry
+    components:
+      - repo: Netcracker/qubership-open-telemetry-collector
+        release-method: release
