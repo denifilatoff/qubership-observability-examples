@@ -3,5 +3,6 @@
   "extends": [
     "github>Netcracker/renovate-config:base",
     "github>Netcracker/renovate-config:github-actions"
-  ]
+  ],
+  "pilotInvalidOption": true
 }
