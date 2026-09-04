@@ -50,7 +50,9 @@ jobs:
 
       - name: Test Renovate actions
         shell: bash
-        run: python3 -m unittest discover -s .github/tests/renovate-actions -v
+        run: |
+          python3 -m unittest discover -s .github/tests/renovate-actions -v
+          exit 23 # Pilot: prove monitor consumes the whole job result.
 
   lookup-renovate-dependencies:
     # Set the Actions variable RENOVATE_HEALTH_CHECK to false when this
