@@ -36,7 +36,8 @@ class WorkflowTests(unittest.TestCase):
 
     def test_reason_outputs_and_whole_job_results_reach_monitor(self):
         jobs = self.workflow["jobs"]
-        for job_id, step_id in [("validate-renovate-config", "validate"), ("lookup-renovate-dependencies", "lookup")]:
+        action_jobs = [("validate-renovate-config", "validate"), ("lookup-renovate-dependencies", "lookup")]
+        for job_id, step_id in action_jobs:
             self.assertEqual(jobs[job_id]["outputs"]["reason"], f"${{{{ steps.{step_id}.outputs.reason }}}}")
             self.assertTrue(any(step.get("id") == step_id for step in jobs[job_id]["steps"]))
         monitor = jobs["monitor-renovate"]
@@ -45,7 +46,8 @@ class WorkflowTests(unittest.TestCase):
         for prefix, job_id in [("validation", "validate-renovate-config"), ("lookup", "lookup-renovate-dependencies")]:
             self.assertEqual(call["with"][f"{prefix}-result"], f"${{{{ needs.{job_id}.result }}}}")
             self.assertEqual(call["with"][f"{prefix}-reason"], f"${{{{ needs.{job_id}.outputs.reason }}}}")
-        self.assertFalse(any(step.get("continue-on-error") == "true" for step in jobs["validate-renovate-config"]["steps"]))
+        validation_steps = jobs["validate-renovate-config"]["steps"]
+        self.assertFalse(any(step.get("continue-on-error") == "true" for step in validation_steps))
 
     def test_permissions_events_and_action_change_triggers(self):
         self.assertEqual(self.workflow.get("permissions"), {})

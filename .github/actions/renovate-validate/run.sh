@@ -7,8 +7,8 @@ validation_status="$?"
 set -e
 
 if [[ "$validation_status" -ne 0 ]]; then
-  echo 'reason=renovate.json failed strict validation' >> "$GITHUB_OUTPUT"
-  exit "$validation_status"
+    echo 'reason=renovate.json failed strict validation' >>"$GITHUB_OUTPUT"
+    exit "$validation_status"
 fi
 
 set -o pipefail
@@ -27,21 +27,21 @@ rate_limit_count="$(jq -R -s "$records_filter | map($rate_limit_filter) | length
 validation_count="$(jq -R -s "$records_filter | map($validation_filter) | length" "$log_file")"
 
 if [[ "$rate_limit_count" -ne 0 ]]; then
-  echo 'reason=GitHub API rate limit prevented shared preset resolution' >> "$GITHUB_OUTPUT"
-  echo "::error::GitHub API rate limit hit; preset resolution could not be verified"
-  jq -R -s -r "$records_filter | map($rate_limit_filter) | .[] | .msg" "$log_file"
-  exit 1
+    echo 'reason=GitHub API rate limit prevented shared preset resolution' >>"$GITHUB_OUTPUT"
+    echo "::error::GitHub API rate limit hit; preset resolution could not be verified"
+    jq -R -s -r "$records_filter | map($rate_limit_filter) | .[] | .msg" "$log_file"
+    exit 1
 fi
 
 if [[ "$validation_count" -ne 0 ]]; then
-  echo 'reason=Renovate could not resolve the repository configuration' >> "$GITHUB_OUTPUT"
-  echo "::error::Renovate could not resolve the repository configuration"
-  jq -R -s -r "$records_filter | map($validation_filter) | .[] | if (.err | type) == \"object\" then (.err.validationError // .msg) else .msg end" "$log_file"
-  exit 1
+    echo 'reason=Renovate could not resolve the repository configuration' >>"$GITHUB_OUTPUT"
+    echo "::error::Renovate could not resolve the repository configuration"
+    jq -R -s -r "$records_filter | map($validation_filter) | .[] | if (.err | type) == \"object\" then (.err.validationError // .msg) else .msg end" "$log_file"
+    exit 1
 fi
 
 if [[ "$renovate_status" -ne 0 ]]; then
-  echo "reason=Renovate preset resolution exited with code $renovate_status" >> "$GITHUB_OUTPUT"
-  echo "::error::Renovate preset resolution exited with code $renovate_status"
-  exit "$renovate_status"
+    echo "reason=Renovate preset resolution exited with code $renovate_status" >>"$GITHUB_OUTPUT"
+    echo "::error::Renovate preset resolution exited with code $renovate_status"
+    exit "$renovate_status"
 fi

@@ -8,8 +8,8 @@ or configure a container. Use them together with the caller workflow below.
 | Action | Required tools | Caller environment | Result |
 | --- | --- | --- | --- |
 | `renovate-validate` | Bash, Renovate CLI and validator, jq, mktemp, tee, rm | Repository checkout; `GITHUB_COM_TOKEN` for presets | Exit status and optional `reason` output |
-| `renovate-lookup` | Bash, Renovate CLI, jq, openssl, mktemp, cp, tail, rm | Repository checkout; `GITHUB_COM_TOKEN` for lookups | Exit status, optional `reason`, and summary |
-| `renovate-monitor` | Bash, gh, jq, grep, awk, mktemp, rm | `GH_REPO`, `GH_TOKEN`, GitHub repository/run context | Exit status, summary, and health issue operations |
+| `renovate-lookup` | Bash, Renovate CLI, jq, OpenSSL, mktemp, cp, tail, rm | Repository checkout; `GITHUB_COM_TOKEN` for lookups | Exit status, optional `reason`, and summary |
+| `renovate-monitor` | Bash, gh, jq, grep, AWK, mktemp, rm | `GH_REPO`, `GH_TOKEN`, GitHub repository/run context | Exit status, summary, and health issue operations |
 
 GitHub supplies `GITHUB_OUTPUT` and `GITHUB_STEP_SUMMARY`. Run each action from the repository root.
 The configuration path is `renovate.json`. The action script is resolved through `github.action_path`.
@@ -188,7 +188,7 @@ Do not set `continue-on-error` on required local tests.
 
 ## Local verification
 
-The pilot suite requires Python 3, PyYAML, Bash, jq, and openssl.
+The pilot suite requires Python 3, PyYAML, Bash, jq, and OpenSSL.
 It runs the real shell scripts with local CLI substitutes, without inheriting authentication credentials.
 The substitutes never fall back to the GitHub API.
 
